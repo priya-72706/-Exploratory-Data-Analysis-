@@ -1,0 +1,101 @@
+# Importing libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+df= pd.read_csv("C:\\Users\\SNU\\Downloads\\Titanic-Dataset.csv")  # Comes with seaborn
+
+
+# Select only numeric columns
+numeric_cols = df.select_dtypes(include='number')
+
+# Calculate Mean
+print("🔹 Mean:")
+print(numeric_cols.mean())
+
+# Calculate Median
+print("\n🔹 Median:")
+print(numeric_cols.median())
+
+# Calculate Standard Deviation
+print("\n🔹 Standard Deviation:")
+print(numeric_cols.std())
+
+
+numeric_cols = df.select_dtypes(include='number').columns
+
+# Set plot style
+sns.set(style="whitegrid")
+
+# Plot Histograms for each numeric feature
+print("📊 Histograms:")
+df[numeric_cols].hist(bins=20, figsize=(14, 10), color='lightblue', edgecolor='black')
+plt.suptitle("Histograms of Numeric Features", fontsize=16)
+plt.tight_layout()
+plt.show()
+
+# Plot Boxplots for each numeric feature
+print("📦 Boxplots:")
+plt.figure(figsize=(14, 8))
+for i, col in enumerate(numeric_cols, 1):
+    plt.subplot(2, (len(numeric_cols)+1)//2, i)
+    sns.boxplot(y=df[col], color='lightgreen')
+    plt.title(f"Boxplot of {col}")
+    plt.tight_layout()
+plt.show()
+
+df_clean = df.dropna(subset=['Age', 'Fare', 'Pclass'])
+
+# Create pairplot
+sns.pairplot(df_clean, vars=['Age', 'Fare', 'Pclass'], hue='Survived', palette='coolwarm')
+plt.suptitle("🔗 Pairplot of Age, Fare, and Pclass by Survival", y=1.02)
+plt.show()
+
+
+survival_by_sex = df.groupby('Sex')['Survived'].mean()
+print(survival_by_sex)
+
+survival_by_class = df.groupby('Pclass')['Survived'].mean()
+print(survival_by_class)
+
+
+sns.boxplot(y=df['Fare'])
+plt.title("🎯 Boxplot of Fare (Check Outliers)")
+plt.show()
+sns.histplot(data=df, x='Age', hue='Survived', bins=30, kde=True, element='step')
+plt.title("📊 Age Distribution by Survival")
+plt.show()
+
+corr = df.corr(numeric_only=True)
+sns.heatmap(corr, annot=True, cmap='coolwarm')
+plt.title("📈 Correlation Matrix")
+plt.show()
+
+
+sns.countplot(data=df, x='Sex', hue='Survived', palette='Set2')
+plt.title("Survival Count by Gender")
+plt.xlabel("Sex")
+plt.ylabel("Count")
+plt.show()
+
+sns.countplot(data=df, x='Pclass', hue='Survived', palette='Set1')
+plt.title("Survival Count by Passenger Class")
+plt.xlabel("Passenger Class")
+plt.ylabel("Count")
+plt.show()
+
+
+sns.histplot(data=df, x='Age', hue='Survived', bins=30, kde=True)
+plt.title("Age Distribution by Survival")
+plt.show()
+
+sns.boxplot(data=df, x='Survived', y='Fare', palette='pastel')
+plt.title("Fare Distribution by Survival")
+plt.xlabel("Survived")
+plt.ylabel("Fare")
+plt.show()
+
+sns.pairplot(df.dropna(subset=['Age', 'Fare', 'Pclass']), 
+             vars=['Age', 'Fare', 'Pclass'], hue='Survived')
+plt.show()
